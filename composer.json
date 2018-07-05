@@ -1,0 +1,21 @@
+{
+    "name": "intranet/intraframe",
+    "description": "A PHP Framework for the Intranet",
+    "type": "library",
+    "require": {
+        "tracy/tracy": "^2.5",
+        "mustache/mustache": "^2.12"
+    },
+    "license": "GNU GPLv3.0",
+    "authors": [
+        {
+            "name": "bennetgallein",
+            "email": "bennet@intranetproject.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "intraframe\\": "src/"
+        }
+    }
+}
