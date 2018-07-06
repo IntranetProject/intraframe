@@ -31,7 +31,7 @@ class Router {
     }
 
     public function get($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' =>  $this->base . $route, 'model' => $viewmodel, 'method' => "GET"];
+        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "GET"];
     }
 
     public function post($route, ViewModel $viewmodel) {
@@ -53,13 +53,11 @@ class Router {
 
     public function routeExists($route, $requestMethod) {
         $routeExists = false;
-        $routeRequestArray = ($route == $this->base . '/' ? ['/'] : explode('/', trim($route, '/')));
-
+        $routeRequestArray = ($route == '/' ? ['/'] : explode('/', trim($route, '/')));
         foreach ($this->routes as $route_) {
             if ($route_['method'] == $requestMethod) {
                 $routeArray = ($route_['route'] == '/' ? ['/'] : explode('/', trim($route_['route'], '/')));
                 $routeItemsIgnored = [];
-
 
                 for ($i = 0; $i < sizeof($routeArray); $i++) {
                     if (self::startsWith($routeArray[$i], "{")) {
@@ -108,12 +106,12 @@ class Router {
     public function run(\Mustache_Engine $mustacheEngine, $route, $requestMethod) {
         $routeData = self::getRoute($route, $requestMethod);
         $routeArray = explode('/', trim($route, '/'));
+
         preg_match_all('/{(.*?)}/', $routeData['route'], $matchesRoute);
         $requestParams = [];
         for ($i = 0; $i < sizeof($matchesRoute[1]); $i++) {
             $requestParams[$matchesRoute[1][$i]] = $routeArray[$i + 1];
         }
-
         $viewModel = $routeData['model'];
 
         $html = $viewModel->run($requestParams);
@@ -128,5 +126,19 @@ class Router {
     public function startsWith($haystack, $needle) {
         $length = strlen($needle);
         return (substr($haystack, 0, $length) === $needle);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBasepath() {
+        return $this->base;
+    }
+
+    /**
+     * @param $path
+     */
+    public function setBasepath($path) {
+        $this->base = $path;
     }
 }

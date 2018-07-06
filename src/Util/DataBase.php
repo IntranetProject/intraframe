@@ -9,6 +9,9 @@
 namespace intraframe\Util;
 
 
+use PDO;
+use PDOException;
+
 class DataBase {
 
     protected static $_instance = null;
@@ -79,8 +82,11 @@ class DataBase {
     /**
      * If you do not want to use the QueryBuilder (in this class included)
      * you are able to run raw queries
+     * @param string $query
+     * @param array $params
+     * @return DataBase
      */
-    public function raw(string $query, array $params = []): db {
+    public function raw(string $query, array $params = []): DataBase {
         $this->raw = true;
         $this->finalQuery = $query;
         $this->finalParams = $params;
@@ -89,30 +95,30 @@ class DataBase {
 
     /**
      * pick a table
-     * @param $table The Table name
-     * @return db chainable class
+     * @param string $table The Table name
+     * @return DataBase chainable class
      */
-    public function table(string $table): db {
+    public function table(string $table): DataBase {
         $this->raw = false;
         $this->table = $table;
         return $this;
     }
 
     /**
-     * @param $columns colums with column => value syntax
-     * @return db chainable class
+     * @param array $columns colums with column => value syntax
+     * @return DataBase chainable class
      */
-    public function update(array $columns): db {
+    public function update(array $columns): DataBase {
         $this->queryType = "update";
         $this->queryUpdate = $columns;
         return $this;
     }
 
     /**
-     * @param $columns colums with column => value syntax
-     * @return db chainable class
+     * @param array $columns colums with column => value syntax
+     * @return DataBase chainable class
      */
-    public function insert(array $columns): db {
+    public function insert(array $columns): DataBase {
         $this->queryType = "insert";
         $this->queryInsert = $columns;
         return $this;
@@ -120,18 +126,18 @@ class DataBase {
 
     /**
      * tells the query builder that you are trying to delete an entry
-     * @return db chainable class
+     * @return DataBase chainable class
      */
-    public function delete(): db {
+    public function delete(): DataBase {
         $this->queryType = "delete";
         return $this;
     }
 
     /**
      * @param string columns the string type of rows you want to select e.g. "id,fullname"
-     * @return db chainable class
+     * @return DataBase chainable class
      */
-    public function select(string $columns): db {
+    public function select(string $columns): DataBase {
         $this->queryType = "select";
         $this->querySelect = $columns;
         return $this;
@@ -140,9 +146,9 @@ class DataBase {
     /**
      * @param array $columns syntax e.g. id => 13
      * @param bool $useAnd use AND in the Where clause
-     * @return db chainable class
+     * @return DataBase chainable class
      */
-    public function where(array $columns, bool $useAnd = false): db {
+    public function where(array $columns, bool $useAnd = false): DataBase {
         $this->queryWhere = $columns;
         $this->queryHasWhereClause = true;
         $this->queryWhereUseAnd = $useAnd;
@@ -152,9 +158,9 @@ class DataBase {
     /**
      * @param string $orderType ASC or DESC
      * @param string $orderColumn the column you want it to be ordered by
-     * @return db chainable class
+     * @return DataBase chainable class
      */
-    public function order(string $orderType, string $orderColumn): db {
+    public function order(string $orderType, string $orderColumn): DataBase {
         $this->queryOrderType = $orderType;
         $this->queryOrderColumn = $orderColumn;
         $this->queryUseOrder = true;
@@ -164,9 +170,9 @@ class DataBase {
     /**
      * @param int $itemCount the amount of items you want to be displayed
      * @param int $offset the offset you want to apply
-     * @return db chainable class
+     * @return DataBase chainable class
      */
-    public function limit(int $itemCount, int $offset): db {
+    public function limit(int $itemCount, int $offset): DataBase {
         $this->queryUseLimit = true;
         $this->queryLimitCount = $itemCount;
         $this->queryLimitOffset = $offset;
@@ -241,7 +247,7 @@ class DataBase {
     }
 
     /**
-     * @return int (lastInsertId) or array(Data) depending on query type
+     * @return array|string
      */
     public function execute() {
         $statement = $this->connection->prepare($this->finalQuery);
@@ -251,7 +257,7 @@ class DataBase {
             return $data;
         }
         if (explode(' ', $query)[0] == 'INSERT') {
-            return $con->lastInsertId();
+            return $this->connection->lastInsertId();
         }
     }
 

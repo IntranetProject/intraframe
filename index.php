@@ -16,11 +16,11 @@ define("MYSQL_USER", "root");
 define("MYSQL_PASSWORD", "root");
 define("MYSQL_DATABASE", "test");
 
-define("BASEPATH", "intraframe");
-
 $router = \intraframe\Router\Router::getInstance();
 
-$router->get("/new", new \intraframe\ViewModels\RootViewModel());
-$router->get('/not-found', new \intraframe\ViewModels\NotFoundViewModel());
+$router->setBasepath("/intraframe");
+
+$router->get("/", new \intraframe\ViewModels\RootViewModel());
+//$router->get('/not-found', new \intraframe\ViewModels\NotFoundViewModel());
 
 include 'app/controller.php';
