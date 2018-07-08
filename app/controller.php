@@ -9,9 +9,9 @@ $mustacheEngine = new Mustache_Engine([
     'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/views')
 ]);
 $requestUri = $_SERVER['REQUEST_URI'];
-
+dump($requestUri);
 if($router->routeExists($requestUri, $_SERVER['REQUEST_METHOD'])) {
     $router->run($mustacheEngine, $requestUri, $_SERVER['REQUEST_METHOD']);
 } else {
-    $router->run($mustacheEngine, '/not-found', $_SERVER['REQUEST_METHOD']);
+    $router->run($mustacheEngine, 'intraframe/not-found', $_SERVER['REQUEST_METHOD']);
 }

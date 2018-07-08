@@ -27,11 +27,11 @@ class Utils {
     }
 
     /**
-     * Returns a formatted Path array, automatically strips index.php
+     * @return array
      */
     public function getPath() {
         $raw = $_SERVER['REQUEST_URI'];
-        $raw = substr($raw, 2);
+        $raw = substr($raw, 1);
         $pathArray = explode('/', trim($raw, '/'));
         if ($pathArray[0] == "index.php")
             unset($pathArray[0]);

@@ -27,11 +27,11 @@ class Router {
     }
 
     protected function __construct() {
-        $this->base = defined('BASEPATH') ? BASEPATH : "";
     }
 
     public function get($route, ViewModel $viewmodel) {
         $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "GET"];
+
     }
 
     public function post($route, ViewModel $viewmodel) {
@@ -57,6 +57,7 @@ class Router {
         foreach ($this->routes as $route_) {
             if ($route_['method'] == $requestMethod) {
                 $routeArray = ($route_['route'] == '/' ? ['/'] : explode('/', trim($route_['route'], '/')));
+
                 $routeItemsIgnored = [];
 
                 for ($i = 0; $i < sizeof($routeArray); $i++) {
@@ -105,6 +106,7 @@ class Router {
 
     public function run(\Mustache_Engine $mustacheEngine, $route, $requestMethod) {
         $routeData = self::getRoute($route, $requestMethod);
+        dump($routeData);
         $routeArray = explode('/', trim($route, '/'));
 
         preg_match_all('/{(.*?)}/', $routeData['route'], $matchesRoute);
