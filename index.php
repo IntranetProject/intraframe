@@ -18,9 +18,10 @@ define("MYSQL_DATABASE", "test");
 
 $router = \intraframe\Router\Router::getInstance();
 
-//$router->setBasepath("/intraframe");
+$router->setBasepath("/intraframe");
 
-$router->get("/intraframe/", new \intraframe\ViewModels\RootViewModel());
-$router->get('/intraframe/not-found', new \intraframe\ViewModels\NotFoundViewModel());
+$router->get("/", new \intraframe\ViewModels\RootViewModel());
+$router->get("/new", new \intraframe\ViewModels\RootViewModel());
+$router->get('/not-found', new \intraframe\ViewModels\NotFoundViewModel());
 
 include 'app/controller.php';

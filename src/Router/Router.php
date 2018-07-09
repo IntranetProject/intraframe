@@ -30,29 +30,31 @@ class Router {
     }
 
     public function get($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "GET"];
-
+        $this->routes[] = ['route' => $route, 'model' => $viewmodel, 'method' => "GET"];
     }
 
     public function post($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "POST"];
+        $this->routes[] = ['route' => $route, 'model' => $viewmodel, 'method' => "POST"];
     }
 
     public function put($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "PUT"];
+        $this->routes[] = ['route' => $route, 'model' => $viewmodel, 'method' => "PUT"];
     }
 
     public function delete($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "DELETE"];
+        $this->routes[] = ['route' => $route, 'model' => $viewmodel, 'method' => "DELETE"];
     }
 
     public function patch($route, ViewModel $viewmodel) {
-        $this->routes[] = ['route' => $this->base . $route, 'model' => $viewmodel, 'method' => "PATCH"];
+        $this->routes[] = ['route' => $route, 'model' => $viewmodel, 'method' => "PATCH"];
     }
 
 
     public function routeExists($route, $requestMethod) {
         $routeExists = false;
+        if ($this->base != "") {
+            $route = substr($route, strlen("/" . $this->base) - 1);
+        }
         $routeRequestArray = ($route == '/' ? ['/'] : explode('/', trim($route, '/')));
         foreach ($this->routes as $route_) {
             if ($route_['method'] == $requestMethod) {
@@ -79,7 +81,10 @@ class Router {
 
     public function getRoute($route, $requestMethod) {
         $outputRoute = null;
-        $routeRequestArray = ($route == $this->base . '/' ? ['/'] : explode('/', trim($route, '/')));
+        if ($this->base != "") {
+            $route = substr($route, strlen("/" . $this->base) - 1);
+        }
+        $routeRequestArray = ($route == '/' ? ['/'] : explode('/', trim($route, '/')));
         $routeIndex = 0;
         foreach ($this->routes as $route_) {
             if ($route_['method'] == $requestMethod) {
@@ -106,7 +111,6 @@ class Router {
 
     public function run(\Mustache_Engine $mustacheEngine, $route, $requestMethod) {
         $routeData = self::getRoute($route, $requestMethod);
-        dump($routeData);
         $routeArray = explode('/', trim($route, '/'));
 
         preg_match_all('/{(.*?)}/', $routeData['route'], $matchesRoute);
